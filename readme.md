@@ -9,7 +9,8 @@ Make a views directory outside your source directory, and put `example.cerb` in 
 	// ...
 	char* result = cerb_example(NULL);
 	http_response(req, 200, result, strlen(result));
-	return (KORE_RESULT_OK);
+	free(result);
+	return KORE_RESULT_OK;
 ```
 
 In the future, you'll be able to pass variables in to the function
