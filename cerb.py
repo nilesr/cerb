@@ -3,6 +3,7 @@ import glob, os, logging, json
 HTML = 0
 PRINTING = 1
 NONPRINTING = 2
+PRE = 3
 signatures = []
 append = """
 #define _GNU_SOURCE
@@ -28,6 +29,7 @@ for f in glob.glob("views/*.cerb"):
     #if os.path.exists(outfile) and os.stat(f).st_mtime < os.stat(outfile).st_mtime:
         #logging.debug("File " + f + " is up to date, skipping")
         #continue
+    pre = ""
     contents = open(f).read()
     state = HTML
     tokens = [[HTML, ""]]
@@ -39,6 +41,10 @@ for f in glob.glob("views/*.cerb"):
             i += 1
         elif contents[i:i + 3] == "<%=":
             state = PRINTING
+            tokens.append([state, ""])
+            i += 2
+        elif contents[i:i + 3] == "<%!":
+            state = PRE
             tokens.append([state, ""])
             i += 2
         elif contents[i:i + 2] == "<%":
@@ -54,12 +60,15 @@ for f in glob.glob("views/*.cerb"):
     result += "char* result = NULL;"
     for token in tokens:
         if token[0] == HTML:
-            result += "Append(&result, " + json.dumps(token[1]) + ");"
+            result += "Append(&result, " + json.dumps(token[1]) + ");\n"
         elif token[0] == PRINTING:
-            result += "Append(&result, " + token[1] + ");"
-        else:
-            result += token[1]
+            result += "Append(&result, " + token[1] + ");\n"
+        elif token[0] == NONPRINTING:
+            result += token[1] + "\n"
+        elif token[0] == PRE:
+            pre += token[1] + "\n"
     result += "return result;}"
+    result = pre + result;
     open(outfile, "w").write(result);
     signatures.append(signature);
 open("src/views.h", "w").write("".join(signatures))

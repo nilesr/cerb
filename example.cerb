@@ -1,11 +1,21 @@
+<%!
+#include <string.h>
+char* upper(char* in) {
+	char* result = strdup(in);
+	for (char* i = result; *i; i++) {
+		*i &= ~32;
+	}
+	return result;
+}
+%>
 <!doctype html>
 <html>
 	<body>
-		<%= "test" %>
-		<%= 2 + 3 %>
+		<%= upper("test") %>
+		<%// comment %>
 		<br />
 		<% for (int i = 0; i < 10; i++) { %>
-			Hello, world<br />
+			Hello, world <%= i %><br />
 		<% } %>
 	</body>
 </html>
