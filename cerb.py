@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import glob, os, logging, json
 HTML = 0
 PRINTING = 1
