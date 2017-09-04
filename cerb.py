@@ -9,11 +9,16 @@ append = """
 #include <stdio.h>
 #ifndef __HAVE_CERB_APPEND
 #define __HAVE_CERB_APPEND
-void append(char** result, char* new) {
-    char* old = *result;
-    asprintf(result, "%s%s", (*result ? *result : ""), new);
-    if (old) free(old);
+#define Make_append(name, printer, type) void name(char** result, type new) { \\
+    char* old = *result; \\
+    asprintf(result, "%s" printer, (*result ? *result : ""), new); \\
+    if (old) free(old); \\
 }
+Make_append(append, "%s", char*);
+Make_append(append_int, "%d", int);
+Make_append(append_float, "%g", float);
+Make_append(append_double, "%g", double);
+#define Append(r, n) _Generic((n), char*: append, int: append_int, float: append_float, double: append_double)((r), (n))
 #endif
 """
 if not os.path.exists("src/_views"): os.mkdir("src/_views")
@@ -45,13 +50,12 @@ for f in glob.glob("views/*.cerb"):
     signature = "char* cerb_" + os.path.basename(f[:-5]) + "(void** locals)"
     result = append + signature + "{"
     signature += ";"
-    result += "char* __temp; char* result = NULL;"
+    result += "char* result = NULL;"
     for token in tokens:
         if token[0] == HTML:
-            result += "append(&result, " + json.dumps(token[1]) + ");"
+            result += "Append(&result, " + json.dumps(token[1]) + ");"
         elif token[0] == PRINTING:
-            result += "__temp = " + token[1] + ";"
-            result += "append(&result, __temp);"
+            result += "Append(&result, " + token[1] + ");"
         else:
             result += token[1]
     result += "return result;}"
