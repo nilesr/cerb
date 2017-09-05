@@ -9,7 +9,7 @@ Make a views directory outside your source directory, and put `example.cerb` in 
 	// ...
 	char* result = cerb_example(NULL);
 	http_response(req, 200, result, strlen(result));
-	free(result);
+	// do NOT free result here
 	return KORE_RESULT_OK;
 ```
 
