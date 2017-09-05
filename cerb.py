@@ -11,8 +11,8 @@ append = """
 #define _HAVE_CERB_APPEND 1
 #define _GNU_SOURCE
 #include <kore/kore.h>
-#include <stdlib.h>
-#include <stdio.h>
+//#include <stdlib.h>
+//#include <stdio.h>
 #define Make_append(name, printer, type) void name(struct kore_buf* result, type new) { \\
     kore_buf_appendf(result, printer, new); \\
 }
