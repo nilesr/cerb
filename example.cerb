@@ -12,11 +12,15 @@ char* upper(char* in) {
 <!doctype html>
 <html>
 	<body>
-		<%= upper("test") %>
+		The string test in uppercase is <%= upper("test") %>
 		<%// comment %>
 		<br />
 		<% for (int i = 0; i < 10; i++) { %>
-			Hello, world <%= i %><br />
+			<%= i %> squared is <%= i * i %><br />
 		<% } %>
+		Local test is <%= Local(test) ? "" : "not" %> set.<br />
+		The value for the local test is <%= Local(test) %><br />
+		Local test2 is <%= Local(test2) ? "" : "not" %> set.<br />
+		The value for the local test2 is <%= Local(test2) %><br />
 	</body>
 </html>

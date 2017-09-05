@@ -7,12 +7,16 @@ Make a views directory outside your source directory, and put `example.cerb` in 
 ```c
 	#include <views.h>
 	// ...
-	char* result = cerb_example(NULL);
+	char* result = Cerb(example, {"test", "a"});
 	http_response(req, 200, result, strlen(result));
 	// do NOT free result here
 	return KORE_RESULT_OK;
 ```
 
-In the future, you'll be able to pass variables in to the function
+It should look something like this
 
-Also you'll have to rerun cerb every time you change your view
+![](ss.png)
+
+You'll have to rerun cerb every time you change your view
+
+If you don't want any locals, just pass `NULL` as the second argument to `Cerb`
