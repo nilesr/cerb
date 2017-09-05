@@ -1,7 +1,8 @@
 <%!
-#include <string.h>
 char* upper(char* in) {
-	char* result = strdup(in);
+	size_t len = strlen(in);
+	char* result = kore_malloc(len);
+	memcpy(result, in, len);
 	for (char* i = result; *i; i++) {
 		*i &= ~32;
 	}

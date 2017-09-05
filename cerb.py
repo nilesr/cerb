@@ -7,14 +7,14 @@ PRE = 3
 signatures = []
 append = """
 #define _GNU_SOURCE
+#include <kore/kore.h>
+//#include <kore/http.h>
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef __HAVE_CERB_APPEND
 #define __HAVE_CERB_APPEND
-#define Make_append(name, printer, type) void name(char** result, type new) { \\
-    char* old = *result; \\
-    asprintf(result, "%s" printer, (*result ? *result : ""), new); \\
-    if (old) free(old); \\
+#define Make_append(name, printer, type) void name(struct kore_buf* result, type new) { \\
+    kore_buf_appendf(result, printer, new); \\
 }
 Make_append(append, "%s", char*);
 Make_append(append_int, "%d", int);
@@ -55,20 +55,19 @@ for f in glob.glob("views/*.cerb"):
             tokens[-1][1] += contents[i]
         i += 1
     signature = "char* cerb_" + os.path.basename(f[:-5]) + "(void** locals)"
-    result = append + signature + "{"
+    result = signature + "{struct kore_buf* __result = kore_buf_alloc(1024);"
     signature += ";"
-    result += "char* result = NULL;"
     for token in tokens:
         if token[0] == HTML:
-            result += "Append(&result, " + json.dumps(token[1]) + ");\n"
+            result += "Append(__result, " + json.dumps(token[1]) + ");\n"
         elif token[0] == PRINTING:
-            result += "Append(&result, " + token[1] + ");\n"
+            result += "Append(__result, " + token[1] + ");\n"
         elif token[0] == NONPRINTING:
             result += token[1] + "\n"
         elif token[0] == PRE:
             pre += token[1] + "\n"
-    result += "return result;}"
-    result = pre + result;
+    result += "char* __result_str = kore_buf_stringify(__result, NULL); kore_buf_free(__result); return __result_str;}"
+    result = append + pre + result;
     open(outfile, "w").write(result);
     signatures.append(signature);
 open("src/views.h", "w").write("".join(signatures))
