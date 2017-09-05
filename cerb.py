@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import glob, os, logging, json
+import glob, os, logging, json, subprocess
 HTML = 0
 PRINTING = 1
 NONPRINTING = 2
@@ -69,5 +69,6 @@ for f in glob.glob("views/*.cerb"):
     result += "char* __result_str = kore_buf_stringify(__result, NULL); kore_buf_free(__result); return __result_str;}"
     result = append + pre + result;
     open(outfile, "w").write(result);
+    subprocess.check_call(["gcc", "-fsyntax-only", outfile])
     signatures.append(signature);
 open("src/views.h", "w").write("".join(signatures))
