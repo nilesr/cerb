@@ -19,7 +19,10 @@ endif
 
 runtime! syntax/html.vim
 unlet! b:current_syntax
-syn include @cTop syntax/c.vim
+"syn include @cTop syntax/c.vim
+syn include @cTop cerb_c.vim
+"syn keyword	cRepeat		while for do then end
+"syn cluster @cTop add=cRepeat
 
 syn cluster erubyRegions contains=cerbPre,cerbBlock,cerbExpr,cerbComment
 

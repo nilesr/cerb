@@ -9,10 +9,7 @@ append = """
 #include "../views.h"
 #ifndef _HAVE_CERB_APPEND
 #define _HAVE_CERB_APPEND 1
-#define _GNU_SOURCE
 #include <kore/kore.h>
-//#include <stdlib.h>
-//#include <stdio.h>
 #define Make_append(name, printer, type) void name(struct kore_buf* result, type new) { \\
     kore_buf_appendf(result, printer, new); \\
 }
@@ -34,6 +31,9 @@ void* _fetch_local(cerb_local* all_locals, char* key) {
 }
 #undef Local
 #define Local(x) _fetch_local(_locals, #x)
+#define do {
+#define then {
+#define end }
 #endif
 """
 locals_macro = """
@@ -48,9 +48,9 @@ if not os.path.exists("src/_views"): os.mkdir("src/_views")
 open("src/views.h", "w").write(locals_macro)
 for f in glob.glob("views/*.cerb"):
     outfile = "src/_" + f[:-5] + ".c"
-    #if os.path.exists(outfile) and os.stat(f).st_mtime < os.stat(outfile).st_mtime:
-        #logging.debug("File " + f + " is up to date, skipping")
-        #continue
+    if os.path.exists(outfile) and os.stat(f).st_mtime < os.stat(outfile).st_mtime:
+        logging.debug("File " + f + " is up to date, skipping")
+        continue
     pre = ""
     contents = open(f).read()
     state = HTML

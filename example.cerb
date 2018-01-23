@@ -15,9 +15,9 @@ char* upper(char* in) {
 		The string test in uppercase is <%= upper("test") %>
 		<%// comment %>
 		<br />
-		<% for (int i = 0; i < 10; i++) { %>
+		<% for (int i = 1; i <= 12; i++) do %>
 			<%= i %> squared is <%= i * i %><br />
-		<% } %>
+		<% end %>
 		Local test is <%= Local(test) ? "" : "not" %> set.<br />
 		The value for the local test is <%= Local(test) %><br />
 		Local test2 is <%= Local(test2) ? "" : "not" %> set.<br />
